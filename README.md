@@ -1,5 +1,7 @@
 # @vert/serializer
 
+[![Build Status](https://travis-ci.org/vuevert/Vert-Serializer.svg?branch=master)](https://travis-ci.org/vuevert/Vert-Serializer)
+
 JSON serialization and deserialization.
 
 ## Quick Start.
