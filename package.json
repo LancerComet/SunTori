@@ -1,0 +1,36 @@
+{
+  "name": "@vert/serializer",
+  "version": "1.0.0",
+  "description": "JSON serialization and deserialization.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.esm.js",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "jest --config jest.config.js",
+    "preversion": "npm run test",
+    "pretest": "npm run build",
+    "prepublish": "npm run test"
+  },
+  "files": [
+    "dist/",
+    "index.d.ts",
+    "README.md"
+  ],
+  "keywords": ["serializer", "typescript"],
+  "author": {
+    "name": "LancerComet",
+    "email": "chw644@hotmail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^23.3.12",
+    "jest": "^24.8.0",
+    "reflect-metadata": "^0.1.13",
+    "rollup": "^1.11.3",
+    "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-typescript2": "^0.21.0",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
+  }
+}

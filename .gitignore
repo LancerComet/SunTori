@@ -1,0 +1,16 @@
+node_modules/
+yarn-error.log
+
+# IDEs.
+.idea/
+.vscode/
+
+# Dist.
+dist/
+
+# Jest.
+.coverage-report/
+.jest/
+
+# Rollup.
+.rpt2_cache/
