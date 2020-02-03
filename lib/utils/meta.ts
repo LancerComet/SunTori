@@ -1,19 +1,19 @@
 /**
- * Reflect key for @JsonProperty.
+ * 创建 "用于存储被 @JsonProperty 装饰的属性的元数据" 的键名.
  */
 function createPropDataMetaKey (): string {
   return 'serializer:props'
 }
 
 /**
- * Reflect key for @Serializable.
+ * 创建 "@Serializable" 键名.
  */
 function createSerializableMetaKey () {
   return 'serializer:serializable'
 }
 
 /**
- * Check whether target is serializable.
+ * 检测目标值是否被 @Serializable 装饰.
  *
  * @param {*} target
  * @returns {boolean}
