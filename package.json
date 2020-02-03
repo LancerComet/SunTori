@@ -1,6 +1,6 @@
 {
   "name": "@vert/serializer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "JSON serialization and deserialization.",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
@@ -16,7 +16,10 @@
     "index.d.ts",
     "README.md"
   ],
-  "keywords": ["serializer", "typescript"],
+  "keywords": [
+    "serializer",
+    "typescript"
+  ],
   "author": {
     "name": "LancerComet",
     "email": "chw644@hotmail.com"
