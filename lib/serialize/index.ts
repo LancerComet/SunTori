@@ -2,14 +2,16 @@ import { IAllPropertiesMetaData, IJsonPropertyOption } from '../types'
 import { checkIsSerializable, createPropDataMetaKey } from '../utils/meta'
 
 /**
- * Model -> JSON Object.
+ * 将目标对象序列化为字符换.
  *
  * @returns {string}
  */
-function serialize<T = any> (target: any): T {
+function serialize <T = any> (target: any): T {
   const isSerializable = checkIsSerializable(target.constructor)
   if (!isSerializable) {
-    console && console.warn && console.warn('[@vert/serializer] This object is not serializable:', target.constructor)
+    console && console.warn && console.warn(
+      '[lib.serializer] 此对象不可被序列化, 请确定已使用 @Serializable 进行装饰:', target.constructor
+    )
     return Object.create(null)
   }
 
@@ -18,7 +20,7 @@ function serialize<T = any> (target: any): T {
 }
 
 /**
- * Create json object.
+ * 构建待反序列化的对象
  *
  * @param {*} sourceObject
  */
@@ -55,7 +57,7 @@ function composeTargetObject (sourceObject: any): { [key: string]: any } {
 }
 
 /**
- * Decorate some property as "ignored".
+ * 标记目标属性为序列化忽略属性.
  */
 function JsonIgnore () {
   return function (targetClass: object, propName: string) {
@@ -72,6 +74,12 @@ function checkIsIgnoreProp (targetClass: object, propName: string): boolean {
   return Reflect.hasMetadata(`serializer:json-ignore:${propName}`, targetClass)
 }
 
+/**
+ * 获取属性的目标键名
+ *
+ * @param propsMeta
+ * @param propName
+ */
 function getTargetKey (propsMeta: IAllPropertiesMetaData, propName: string): string {
   const propMeta: IJsonPropertyOption = propsMeta[propName] || {}
   return propMeta.name || propName

@@ -2,8 +2,8 @@ import 'reflect-metadata'
 
 import { deserialize, JsonIgnore, JsonProperty, Serializable, serialize } from '../lib'
 
-describe('Serialization testing.', () => {
-  it('No error should be thrown while serializing.', () => {
+describe('serialize 测试.', () => {
+  it('应当正确序列化目标对象.', () => {
     @Serializable()
     class User {
       @JsonProperty()
@@ -31,7 +31,7 @@ describe('Serialization testing.', () => {
     expect(JSON.stringify(json)).toBe('{"name":"LancerComet","age":100}')
   })
 
-  it('non-@Serializable object should not be serialized.', () => {
+  it('非 @Serializable 对象无法序列化.', () => {
     class User {
       @JsonProperty()
       name: string = ''
@@ -54,7 +54,7 @@ describe('Serialization testing.', () => {
     expect(json).toEqual({})
   })
 
-  it('Array-typed data should be serialized in correct.', () => {
+  it('应当正确处理嵌套类型.', () => {
     @Serializable()
     class Book {
       @JsonProperty()
@@ -136,7 +136,7 @@ describe('Serialization testing.', () => {
     expect(source).toEqual(target)
   })
 
-  it('Props name should be matched correctly.', () => {
+  it('当被序列化的对象通过 JsonProperty 指定了 name 时，序列化时应当取用指定的 name.', () => {
     @Serializable()
     class Book {
       @JsonProperty('book_name')
@@ -156,7 +156,9 @@ describe('Serialization testing.', () => {
     }
 
     const instance = deserialize(serverData, Book)
+
     const source = serialize(instance)
+
     expect(source).toEqual(serverData)
   })
 })
