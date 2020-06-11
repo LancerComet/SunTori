@@ -16,6 +16,13 @@ namespace Serializer {
      * This param must be provided for array-typed property.
      */
     type?: any
+
+    /**
+     * Whether convert a null value into a fallback value.
+     * The default value is false, when it is set to true,
+     * a fallback value would be assigned when a null value is received from data source.
+     */
+    isDeserializeNull?: boolean
   })
 
   /**
@@ -23,7 +30,14 @@ namespace Serializer {
    *
    * @export
    */
-  export function Serializable ()
+  export function Serializable (options?: {
+    /**
+     * Whether convert a null value into a default instance.
+     * The default value is false, when it is set to true,
+     * a default instance would be assigned when a null value is received from data source.
+     */
+    isDeserializeNull?: boolean
+  })
 
   /**
    * Deserialize json to model class.
