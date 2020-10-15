@@ -13,6 +13,15 @@ function createSerializableMetaKey () {
 }
 
 /**
+ * 创建 @Serializable 配置项的键名.
+ *
+ * @returns
+ */
+function createSerializableOptionMetaKey () {
+  return 'serializer:option'
+}
+
+/**
  * 检测目标值是否被 @Serializable 装饰.
  *
  * @param {*} target
@@ -25,5 +34,6 @@ function checkIsSerializable (target: any): boolean {
 export {
   createPropDataMetaKey,
   createSerializableMetaKey,
-  checkIsSerializable
+  checkIsSerializable,
+  createSerializableOptionMetaKey
 }

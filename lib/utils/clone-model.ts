@@ -2,11 +2,10 @@ import { deserialize } from '../deserialize'
 import { serialize } from '../serialize'
 
 /**
- * 复制 Model.
- * 将创建一个新的 Model, 并将目标 Model 的值赋予给它.
+ * Clone a model from an existing one.
  *
  * @template T
- * @param {T} model 待复制 Model.
+ * @param {T} model
  * @returns {T}
  */
 function cloneModel<T> (model: T): T {

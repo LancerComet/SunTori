@@ -23,7 +23,11 @@ export default {
       tsconfigOverride: {
         compilerOptions: {
           target: 'es5'
-        }
+        },
+        include: [
+          "./lib",
+          "./node_modules/reflect-metadata"
+        ]
       }
     })
   ]

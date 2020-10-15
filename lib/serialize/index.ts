@@ -2,9 +2,12 @@ import { IAllPropertiesMetaData, IJsonPropertyOption } from '../types'
 import { checkIsSerializable, createPropDataMetaKey } from '../utils/meta'
 
 /**
- * 将目标对象序列化为字符换.
+ * Serialize model class to json.
+ * Model -> JSON.
  *
- * @returns {string}
+ * @template T
+ * @param {*} target
+ * @returns {T}
  */
 function serialize <T = any> (target: any): T {
   const isSerializable = checkIsSerializable(target.constructor)
@@ -57,7 +60,7 @@ function composeTargetObject (sourceObject: any): { [key: string]: any } {
 }
 
 /**
- * 标记目标属性为序列化忽略属性.
+ * Decorated property will be ignored when serializing.
  */
 function JsonIgnore () {
   return function (targetClass: object, propName: string) {

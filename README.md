@@ -1,6 +1,6 @@
 # @vert/serializer
 
-[![Build Status](https://travis-ci.org/vuevert/Vert-Serializer.svg?branch=master)](https://travis-ci.org/vuevert/Vert-Serializer)
+[![Serializer](https://github.com/vuevert/Vert-Serializer/workflows/Test/badge.svg)](https://github.com/LancerComet/vue-jsonp/actions)
 
 JSON serialization and deserialization.
 
@@ -126,6 +126,13 @@ namespace Serializer {
      * This param must be provided for array-typed property.
      */
     type?: any
+
+    /**
+     * Whether convert a null value into a fallback value.
+     * The default value is false, when it is set to true,
+     * a fallback value would be assigned when a null value is received from data source.
+     */
+    isDeserializeNull?: boolean
   })
 
   /**
@@ -133,7 +140,14 @@ namespace Serializer {
    *
    * @export
    */
-  export function Serializable ()
+  export function Serializable (options?: {
+    /**
+     * Whether convert a null value into a default instance.
+     * The default value is false, when it is set to true,
+     * a default instance would be assigned when a null value is received from data source.
+     */
+    isDeserializeNull?: boolean
+  })
 
   /**
    * Deserialize json to model class.
