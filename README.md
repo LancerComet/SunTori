@@ -1,6 +1,6 @@
 # @vert/serializer
 
-[![Build Status](https://travis-ci.org/vuevert/Vert-Serializer.svg?branch=master)](https://travis-ci.org/vuevert/Vert-Serializer)
+[![Serializer](https://github.com/vuevert/Vert-Serializer/workflows/Test/badge.svg)](https://github.com/LancerComet/vue-jsonp/actions)
 
 JSON serialization and deserialization.
 
