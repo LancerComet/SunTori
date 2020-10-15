@@ -13,7 +13,6 @@
   },
   "files": [
     "dist/",
-    "index.d.ts",
     "README.md"
   ],
   "keywords": [

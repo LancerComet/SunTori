@@ -2,8 +2,8 @@ import 'reflect-metadata'
 
 import { deserialize, JsonIgnore, JsonProperty, Serializable, serialize } from '../lib'
 
-describe('serialize 测试.', () => {
-  it('应当正确序列化目标对象.', () => {
+describe('serialize testing.', () => {
+  it('serialize should work.', () => {
     @Serializable()
     class User {
       @JsonProperty()
@@ -31,7 +31,7 @@ describe('serialize 测试.', () => {
     expect(JSON.stringify(json)).toBe('{"name":"LancerComet","age":100}')
   })
 
-  it('非 @Serializable 对象无法序列化.', () => {
+  it('The class that is not decorated by @Serializable can not be serialized.', () => {
     class User {
       @JsonProperty()
       name: string = ''

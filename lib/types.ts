@@ -1,37 +1,40 @@
 interface ISerializableOption {
   /**
-   * 是否将 null 值反序列化为空 Model.
-   * 默认为 false, 当为 true 时, 如果数据源传入 null, 将创建一个 Model 实例..
+   * Whether allows null value from data source.
+   *
+   * If set to true, a default instance would be returned when
+   * calling "deserialize()" with a null value from data source.
+   *
+   * @default false
    */
-  isDeserializeNull?: boolean
+  isDisallowNull?: boolean
 }
 
-/**
- * 被 @JsonProperty 装饰的属性的元数据对象.
- *
- * @class JsonPropertyMetaData
- */
 interface IJsonPropertyOption {
   /**
-   * 反序列化时数据源的属性名称.
+   * Property in data source.
    */
   name?: string
 
   /**
-   * 反序列化的目标类型.
-   * 如果目标是数组类型, 请显式提供此选项.
+   * Target model class.
+   * This param must be provided for array-typed property.
    */
   type?: any
 
   /**
-   * 是否将 null 值反序列化为空 Model.
-   * 默认为 false, 当为 true 时, 如果数据源传入 null, 将使用默认值.
+   * Whether allows null value from data source.
+   *
+   * If set to true, the fallback value would be assigned when
+   * receiving a null value from data source.
+   *
+   * @default false
    */
-  isDeserializeNull?: boolean
+  isDisallowNull?: boolean
 }
 
 /**
- * Class 中全体属性的元数据信息.
+ * All properties' meta data in a single class.
  *
  * @interface IAllPropertiesMetaData
  */
@@ -40,7 +43,7 @@ interface IAllPropertiesMetaData {
 }
 
 /**
- * 获取目标类型的构造函数.
+ * Get the constructor type of something.
  */
 type ConstructorOf<T> = new (...agrs: any[]) => T
 

@@ -3,30 +3,32 @@ import 'reflect-metadata'
 import { cloneModel } from '../lib'
 import { deserialize, JsonProperty, Serializable } from '../lib'
 
-it('cloneModel', () => {
-  @Serializable()
-  class User {
-    @JsonProperty()
-    readonly name: string = ''
+describe('cloneModel testing.', () => {
+  it('cloneModel should work.', () => {
+    @Serializable()
+    class Example {
+      @JsonProperty()
+      readonly name: string = ''
 
-    @JsonProperty()
-    readonly age: number = 0
+      @JsonProperty()
+      readonly age: number = 0
 
-    get doubleAge () {
-      return this.age * 2
+      get doubleAge () {
+        return this.age * 2
+      }
     }
-  }
 
-  const user = deserialize({ name: 'test', age: 100 }, User)
-  const userClone = cloneModel(user)
+    const example = deserialize({ name: 'test', age: 100 }, Example)
+    const exampleClone = cloneModel(example)
 
-  expect(user.constructor).toBe(userClone.constructor)
-  expect(user === userClone).toBe(false)
+    expect(example.constructor).toBe(exampleClone.constructor)
+    expect(example === exampleClone).toBe(false)
 
-  expect(userClone.name).toBe('test')
-  expect(userClone.age).toBe(100)
-  expect(userClone.doubleAge).toBe(200)
+    expect(exampleClone.name).toBe('test')
+    expect(exampleClone.age).toBe(100)
+    expect(exampleClone.doubleAge).toBe(200)
 
-  expect(cloneModel(null)).toBe(null)
-  expect(cloneModel(undefined)).toBe(null)
+    expect(cloneModel(null)).toBe(null)
+    expect(cloneModel(undefined)).toBe(null)
+  })
 })

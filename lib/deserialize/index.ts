@@ -1,9 +1,9 @@
 import { ConstructorOf, IAllPropertiesMetaData, IJsonPropertyOption, ISerializableOption } from '../types'
-import { isArray } from '../utils/array'
+import { isArray, isBoolean, isDate, isNull, isNumber, isString, isUndefined } from '../utils/type'
 import { checkIsSerializable, createPropDataMetaKey, createSerializableMetaKey, createSerializableOptionMetaKey } from '../utils/meta'
 
 /**
- * Decorate a class serializable.
+ * Make a class serializable.
  */
 function Serializable (options: ISerializableOption = {}) {
   return function (target: object) {
@@ -13,9 +13,9 @@ function Serializable (options: ISerializableOption = {}) {
 }
 
 /**
- * Define json property.
+ * Define a json property.
  *
- * @param {string | IJsonPropertyOption} [param]
+ * @param {(string | IJsonPropertyOption)} [param] JSON property config.
  */
 function JsonProperty (param?: string | IJsonPropertyOption) {
   return function (targetClass: object, propName: string) {
@@ -53,7 +53,7 @@ function createJsonPropertyMetaData (propName: string, param?: string | IJsonPro
     default:
       result.name = param.name || propName
       result.type = param.type
-      result.isDeserializeNull = param.isDeserializeNull
+      result.isDisallowNull = param.isDisallowNull
       break
   }
 
@@ -61,11 +61,12 @@ function createJsonPropertyMetaData (propName: string, param?: string | IJsonPro
 }
 
 /**
+ * Deserialize json to model class.
  * JSON -> Model.
  *
  * @template T
- * @param {any} dataSource
- * @param {ConstructorOf<T>} targetType
+ * @param {object} dataSource Data source, a json object.
+ * @param {ConstructorOf<T>} targetType Target model class.
  * @returns {T}
  */
 function deserialize<T> (dataSource: any, targetType: ConstructorOf<T>): T {
@@ -75,15 +76,17 @@ function deserialize<T> (dataSource: any, targetType: ConstructorOf<T>): T {
     return instance
   }
 
-  const { isDeserializeNull } = Reflect.getOwnMetadata(
+  const { isDisallowNull } = Reflect.getOwnMetadata(
     createSerializableOptionMetaKey(),
     targetType
   ) as ISerializableOption
 
-  if (dataSource === null || typeof dataSource === 'undefined') {
-    return isDeserializeNull
-      ? instance
-      : null
+  if (isUndefined(dataSource)) {
+    return
+  }
+
+  if (isNull(dataSource)) {
+    return isDisallowNull ? instance : null
   }
 
   const allPropertiesMetaData = Reflect.getMetadata(
@@ -94,7 +97,7 @@ function deserialize<T> (dataSource: any, targetType: ConstructorOf<T>): T {
     const propMetaData = allPropertiesMetaData[propName]
     const jsonPropName = propMetaData.name
     const jsonValue = dataSource[jsonPropName]
-    if (typeof jsonValue !== 'undefined') {
+    if (!isUndefined(jsonValue)) {
       instance[propName] = createModelValueFromJson(instance, propName, propMetaData, jsonValue)
     }
   })
@@ -123,32 +126,80 @@ function createModelValueFromJson (
 
   const typeName = targetTypeObject.name.toLowerCase()
   const defaultValue = instance[propName]
-  const isDeserializeNull = propMetaData.isDeserializeNull
+  const isDisallowNull = propMetaData.isDisallowNull
 
   // 基础类型和没有被 @Serializable 的 object.
   if (!checkIsSerializable(targetTypeObject)) {
     switch (typeName) {
-      case 'number':
-        return isNaN(jsonValue) ? undefined : jsonValue
+      case 'number': {
+        if (jsonValue === null && !isDisallowNull) {
+          return null
+        }
 
-      case 'string':
-        return typeof jsonValue === 'string' ? jsonValue : undefined
+        if (isNumber(jsonValue)) {
+          return jsonValue
+        }
 
-      case 'boolean':
-        return typeof jsonValue === 'boolean' ? jsonValue : undefined
+        if (isNumber(defaultValue)) {
+          return defaultValue
+        }
 
-      case 'date':
-        return isNaN(Date.parse(jsonValue)) ? undefined : new Date(jsonValue)
+        return undefined
+      }
 
-      default:
+      case 'string': {
+        if (jsonValue === null && !isDisallowNull) {
+          return null
+        }
+
+        if (isString(jsonValue)) {
+          return jsonValue
+        }
+
+        if (isString(defaultValue)) {
+          return defaultValue
+        }
+
+        return undefined
+      }
+
+      case 'boolean': {
+        if (jsonValue === null && !isDisallowNull) {
+          return null
+        }
+
+        if (isBoolean(jsonValue)) {
+          return jsonValue
+        }
+
+        if (isBoolean(defaultValue)) {
+          return defaultValue
+        }
+
+        return undefined
+      }
+
+      case 'date': {
+        if (jsonValue === null && !isDisallowNull) {
+          return null
+        }
+
+        const isDateInvalid = isNaN(Date.parse(jsonValue))
+        return isDateInvalid
+          ? isDate(defaultValue) ? defaultValue : undefined
+          : new Date(jsonValue)
+      }
+
+      default: {
         return jsonValue
+      }
     }
   }
 
   // 被 Serializable 装饰的引用类型.
-  const isArrayTyped = isArray(defaultValue) || isArray(jsonValue)
 
   // 如果是数组则循环遍历.
+  const isArrayTyped = isArray(defaultValue) || isArray(jsonValue)
   if (isArrayTyped) {
     // 如果传来的是 null 值, 就返回默认值.
     if (jsonValue === null) {
@@ -158,7 +209,7 @@ function createModelValueFromJson (
     if (isArray(jsonValue)) {
       const result = []
       jsonValue.forEach(item => {
-        if (item === null && isDeserializeNull) {
+        if (item === null && isDisallowNull) {
           result.push(defaultValue)
         } else {
           result.push(deserialize(item, targetTypeObject))
@@ -167,8 +218,9 @@ function createModelValueFromJson (
       return result
     }
   }
+
   // 非数组类型.
-  if (isDeserializeNull && jsonValue === null) {
+  if (isDisallowNull && jsonValue === null) {
     return defaultValue
   }
 
