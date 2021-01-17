@@ -4,7 +4,7 @@ module.exports = {
   collectCoverage: true,
   coverageDirectory: '<rootDir>/.coverage-report',
   moduleNameMapper: {
-    "../lib$": "<rootDir>/dist/index.js"
+    '../lib$': '<rootDir>/dist/index.js'
   },
   collectCoverageFrom: [
     '<rootDir>/dist/index.js',

@@ -27,7 +27,11 @@ function serialize <T = any> (target: any): T {
  *
  * @param {*} sourceObject
  */
-function composeTargetObject (sourceObject: any): { [key: string]: any } {
+function composeTargetObject (sourceObject: any): { [key: string]: any } | string | number | boolean {
+  if (typeof sourceObject === 'string' || typeof sourceObject === 'number' || typeof sourceObject === 'boolean') {
+    return sourceObject
+  }
+
   const clone: any = Object.create(null)
   const propsMeta: IAllPropertiesMetaData = Reflect.getMetadata(createPropDataMetaKey(), sourceObject) || {}
 
