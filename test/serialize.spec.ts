@@ -15,20 +15,25 @@ describe('serialize testing.', () => {
       @JsonProperty('user_address')
       @JsonIgnore()
       address: string = ''
+
+      @JsonProperty()
+      books: string[] = []
     }
 
     const instance = deserialize({
       name: 'LancerComet',
       age: 100,
-      user_address: 'The Mars.'
+      user_address: 'The Mars.',
+      books: ['A', 'The Heaven']
     }, User)
 
     expect(instance.name).toBe('LancerComet')
     expect(instance.age).toBe(100)
     expect(instance.address).toBe('The Mars.')
+    expect(instance.books).toEqual(['A', 'The Heaven'])
 
     const json = serialize(instance)
-    expect(JSON.stringify(json)).toBe('{"name":"LancerComet","age":100}')
+    expect(JSON.stringify(json)).toBe('{"name":"LancerComet","age":100,"books":["A","The Heaven"]}')
   })
 
   it('The class that is not decorated by @Serializable can not be serialized.', () => {
