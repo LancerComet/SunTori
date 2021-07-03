@@ -1,191 +1,124 @@
 import 'reflect-metadata'
-import { deserialize, JsonProperty, Serializable } from '../lib'
+import { deserialize, DynamicKey, JsonProperty, JsonString, Nullable, Serializable } from '../lib'
 
-describe('Deserialize testing.', () => {
-  const DEFAULT_DATE = new Date()
+describe('Deserialization testing.', () => {
+  it('A simple deserialization should work properly.', () => {
+    @Serializable()
+    class Address {
+      @JsonProperty('label')
+      label: string = ''
 
-  interface IAddressDetail {
-    postcode: number
-    isExist: boolean
-  }
-
-  @Serializable()
-  class Address {
-    @JsonProperty('label')
-    label: string = ''
-
-    @JsonProperty('the_address')
-    address: string = ''
-
-    @JsonProperty()
-    detail: IAddressDetail = {
-      postcode: 0,
-      isExist: false
+      @JsonProperty('the_address')
+      address: string = ''
     }
-  }
 
-  @Serializable()
-  class Card {
-    @JsonProperty()
-    id: string = ''
+    @Serializable()
+    class User {
+      @JsonProperty()
+      name: string = ''
 
-    @JsonProperty()
-    value: number = 0
-  }
+      @JsonProperty()
+      age: number = 0
 
-  @Serializable()
-  class User {
-    @JsonProperty()
-    name: string = ''
+      @JsonProperty()
+      date: Date = new Date()
 
-    @JsonProperty()
-    age: number = 0
+      @JsonProperty('address')
+      address: Address = new Address()
 
-    @JsonProperty()
-    date: Date = DEFAULT_DATE
+      @JsonProperty('authors')
+      authors: string[] = []
+    }
 
-    @JsonProperty()
-    books: string[] = []
-
-    @JsonProperty({
-      type: Card,
-      name: 'the_cards'
-    })
-    cards: Card[] = [new Card()]
-
-    @JsonProperty({
-      type: Address,
-      name: 'addresses'
-    })
-    addresses: Address[] = [new Address()]
-  }
-
-  it('deserialize should work (with correct data source).', () => {
-    const user = deserialize({
+    const instance = deserialize({
       name: 'LancerComet',
       age: 100,
       date: '1926-08-17 00:00:00',
-      books: ['bookA', 'bookB'],
-      the_cards: [
-        { id: 'card-01', value: 10 }
-      ],
-      addresses: [
-        {
-          label: 'the heaven',
-          the_address: 'above the sky',
-          detail: { postcode: 0, isExist: false }
-        },
-        {
-          label: 'the hell',
-          the_address: 'below the ground',
-          detail: { postcode: 1, isExist: true }
-        }
+      address: {
+        label: 'the heaven',
+        the_address: 'above the sky'
+      },
+      authors: [
+        'John Smith'
       ]
     }, User)
 
-    expect(user).toEqual({
+    expect(instance.name).toBe('LancerComet')
+    expect(instance.age).toBe(100)
+    expect(instance.address).toEqual({
+      label: 'the heaven',
+      address: 'above the sky'
+    })
+    expect(instance.authors).toEqual(['John Smith'])
+  })
+
+  it('Prop mapping should work properly.', () => {
+    @Serializable()
+    class User {
+      @JsonProperty()
+      name: string = ''
+
+      @JsonProperty('user_age')
+      age: number = 0
+
+      @JsonProperty('user_address')
+      address: string = 'Default address'
+    }
+
+    const instance = deserialize({
       name: 'LancerComet',
-      age: 100,
-      date: new Date('1926-08-17 00:00:00'),
-      books: ['bookA', 'bookB'],
-      cards: [
-        { id: 'card-01', value: 10 }
-      ],
-      addresses: [
-        {
-          label: 'the heaven',
-          address: 'above the sky',
-          detail: { postcode: 0, isExist: false }
-        },
-        {
-          label: 'the hell',
-          address: 'below the ground',
-          detail: { postcode: 1, isExist: true }
-        }
-      ]
-    })
-  })
-
-  it('deserialize should work (with incorrect data source).', () => {
-    const user = deserialize({
-      wrong_name_prop: 'LancerComet',  // wrong property name
-      age: null,                       // null value
-      date: false,                     // wrong date value
-      wrong_books: ['bookA', false],   // wrong property name
-      cards: [                         // wrong property name
-        { id: () => 1, value: false }  // wrong value type
-      ],
-      addresses: [
-        {
-          label: {},                                   // wrong value type
-          the_address: undefined,                      // undefined value
-          detail: { postcode: false, isExist: false }  // wrong value type
-        },
-        {
-          the_label: () => {},                         // wrong property name & value type
-          the_address: 'below the ground',
-          detail: { postcode: 1, isExist: 'a' }        // partial wrong value type
-        }
-      ]
+      user_age: 100,
+      wrong_address: 'The Mars.'
     }, User)
 
-    expect(user).toEqual({
-      name: '',
-      age: null,
-      date: DEFAULT_DATE,
-      books: [],
-      cards: [
-        { id: '', value: 0 }
-      ],
-      addresses: [
-        {
-          label: '',
-          address: '',
-          detail: { postcode: false, isExist: false }  // Because this is a interface so this should the incorrect payload value.
-        },
-        {
-          label: '',
-          address: 'below the ground',
-          detail: { postcode: 1, isExist: 'a' }  // Because this is a interface so this should the incorrect payload value.
-        }
+    expect(instance.name).toBe('LancerComet')
+    expect(instance.age).toBe(100)
+    expect(instance.address).toBe('Default address')
+  })
+
+  it('Nested-type should work properly.', () => {
+    @Serializable()
+    class User {
+      @JsonProperty()
+      name: string = ''
+
+      @JsonProperty('user_age')
+      age: number = 0
+
+      @JsonProperty('user_address')
+      address: string = ''
+    }
+
+    @Serializable()
+    class UserList {
+      @JsonProperty({
+        name: 'users',
+        type: User
+      })
+      users: User[] = []
+    }
+
+    const instance = deserialize({
+      users: [{
+        name: 'LancerComet',
+        user_age: 100,
+        user_address: 'The Mars.'
+      }, {
+        name: 'John Smith',
+        user_age: 200,
+        user_address: 'Heaven.'
+      }]
+    }, UserList)
+
+    expect(instance).toEqual({
+      users: [
+        {name: 'LancerComet', age: 100, address: 'The Mars.'},
+        {name: 'John Smith', age: 200, address: 'Heaven.'}
       ]
     })
   })
-})
 
-describe('Undefined data source testing.', () => {
-  @Serializable()
-  class Example {
-    @JsonProperty()
-    name: string = ''
-
-    @JsonProperty()
-    age: number
-
-    @JsonProperty()
-    heavy: number = null
-
-    @JsonProperty({
-      isDisallowNull: true
-    })
-    heavy2: number = 0
-  }
-
-  it('Should get an undefined.', () => {
-    expect(deserialize(undefined, Example)).toBe(undefined)
-  })
-
-  it('Should get the specific value.', () => {
-    expect(deserialize({}, Example)).toEqual({
-      name: '',
-      heavy: null,
-      heavy2: 0
-    })
-  })
-})
-
-describe('Inheritance testing.', () => {
-  it('Should deal with inheritance correctly.', () => {
+  it('Inheritance should be handled properly.', () => {
     @Serializable()
     class Creature {
       @JsonProperty('user_age')
@@ -216,77 +149,286 @@ describe('Inheritance testing.', () => {
       address: 'The Mars.'
     })
   })
-})
 
-describe('isDisallowNull testing.', () => {
-  it('isDisallowNull in @Serializable should work correctly.', () => {
-    @Serializable({
-      isDisallowNull: true
-    })
-    class NullDisallow {
+  it('Null payload should be handled properly.', () => {
+    @Serializable()
+    class User {
       @JsonProperty()
-      name: string = 'one'
+      name: string = ''
+
+      @JsonProperty()
+      age: number = 0
+
+      @JsonProperty()
+      date: Date = new Date()
     }
+
+    const userInstance = deserialize(null, User)
+    expect(userInstance).toBe(null)
 
     @Serializable()
-    class Nullable {
-      @JsonProperty()
-      name: string = 'two'
+    class UserList {
+      @JsonProperty({
+        type: User,
+        name: 'user_list'
+      })
+      userList: User[] = [userInstance]
     }
 
-    expect(deserialize(null, NullDisallow)).toEqual(new NullDisallow())
-    expect(deserialize(null, Nullable)).toBe(null)
+    const result = deserialize({
+      user_list: null
+    }, UserList)
+
+    expect(result).toEqual({
+      userList: [userInstance]
+    })
   })
 
-  it('isDisallowNull in @JsonProperty should work correctly.', () => {
-    const dataSource = { name: null, age: null, heavy: null }
-
+  it('Undefined should be handled properly.', () => {
     @Serializable()
-    class Example {
+    class User {
       @JsonProperty()
       name: string = ''
 
-      @JsonProperty({
-        isDisallowNull: true
-      })
+      @JsonProperty()
       age: number = 0
 
-      @JsonProperty({
-        isDisallowNull: false
-      })
-      heavy: number = 0
+      @JsonProperty()
+      date: Date = new Date()
     }
 
-    expect(deserialize(dataSource, Example)).toEqual({
-      name: null,
-      age: 0,
-      heavy: null
-    })
+    const userInstance = deserialize(undefined, User)
+    expect(userInstance).toBe(null)
 
-    @Serializable({
-      isDisallowNull: true
-    })
-    class Example2 {
+    @Serializable()
+    class UserList {
       @JsonProperty({
-        isDisallowNull: true
+        type: User,
+        name: 'user_list'
       })
+      userList: User[] = [userInstance]
+    }
+
+    const result = deserialize({
+      user_list: undefined
+    }, UserList)
+
+    expect(result).toEqual({
+      userList: [userInstance]
+    })
+  })
+
+  it('Fallback value should be returned when incorrect array-typed received.', () => {
+    @Serializable()
+    class Person {
+      @JsonProperty()
       name: string = ''
 
-      @JsonProperty({
-        isDisallowNull: true
-      })
-      age: number = 0
-
-      @JsonProperty({
-        isDisallowNull: false
-      })
-      heavy: number = 0
+      constructor (name) {
+        this.name = name
+      }
     }
 
-    expect(deserialize(dataSource, Example2)).toEqual({
-      name: '',
-      age: 0,
-      heavy: null
+    @Serializable()
+    class Country {
+      @JsonProperty('chair_man')
+      chairman: Person = new Person('WINNIE')
+    }
+
+    const correctInstance = deserialize({
+      chair_man: {
+        name: 'WINNIE_THE_POOH'
+      }
+    }, Country)
+
+    expect(correctInstance).toEqual({
+      chairman: {
+        name: 'WINNIE_THE_POOH'
+      }
+    })
+
+    const errorInstance = deserialize({
+      chair_man: [{
+        name: 'WINNIE'
+      }, {
+        name: 'HAHA'
+      }]
+    }, Country)
+
+    expect(errorInstance).toEqual({
+      chairman: {
+        name: 'WINNIE'
+      }
+    })
+  })
+
+  it('@JsonString should work properly.', () => {
+    @Serializable()
+    class Sub {
+      @JsonProperty('a_ee')
+      aEe: number = 0
+
+      @JsonProperty('b_cii')
+      bCii: number = 0
+    }
+
+    @Serializable()
+    class Params {
+      @JsonProperty()
+      c: number = 0
+
+      @JsonProperty()
+      d: number = 0
+    }
+
+    @Serializable()
+    class A {
+      @JsonProperty('sub_data')
+      subData: Sub = new Sub()
+
+      @JsonProperty()
+      @JsonString()
+      params: Params = new Params()
+
+      @JsonProperty()
+      @JsonString()
+      paramsB: Params = new Params()
+
+      @JsonProperty('params_c')
+      @JsonString()
+      paramsC: Params = new Params()
+
+      @JsonProperty('params_d')
+      @JsonString()
+      paramsD: Params = new Params()
+
+      @JsonProperty({
+        type: Params,
+        name: 'paramsE'
+      })
+      paramsE: Params[] = [new Params()]
+
+      @JsonProperty({
+        type: Params,
+        name: 'paramsF'
+      })
+      @JsonString()
+      paramsF: Params[] = []
+
+      @JsonProperty('num')
+      allNum: number = 0
+    }
+
+    const a = deserialize({
+      sub_data: { a_ee: 10, b_cii: 20 },
+      params: '{ "c": 100, "d": 200 }',
+      parmsB: [],
+      params_c: '{ "c": 101, "d": 202 }',
+      params_d: { c: 102, d: 103 },
+      paramsE: JSON.stringify([
+        { c: 1, d: 2 }, { c: 3, d: 4 }
+      ]),
+      paramsF: JSON.stringify([
+        { c: 1, d: 2 }, { c: 3, d: 4 }
+      ]),
+      num: 100
+    }, A)
+
+    expect(a).toEqual({
+      subData: { aEe: 10, bCii: 20 },
+      params: { c: 100, d: 200 },
+      paramsB: { c: 0, d: 0 },
+      paramsC: { c: 101, d: 202 },
+      paramsD: { c: 102, d: 103 },
+      paramsE: [{ c: 0, d: 0 }],
+      paramsF: [{ c: 1, d: 2 }, { c: 3, d: 4 }],
+      allNum: 100
+    })
+  })
+
+  it('@DynamicKey should work properly.', () => {
+    @Serializable()
+    class A {
+      @JsonProperty()
+      a: string = ''
+    }
+
+    @Serializable()
+    class B {
+      @JsonProperty({
+        name: 'as',
+        type: A
+      })
+      @DynamicKey()
+      as: { [key: string]: A } = {}
+    }
+
+    const b = deserialize({
+      as: {
+        a: { a: '1' },
+        b: { a: '2' },
+        c: { a: '3' }
+      }
+    }, B)
+
+    expect(b).toEqual({
+      as: {
+        a: { a: '1' },
+        b: { a: '2' },
+        c: { a: '3' }
+      }
+    })
+  })
+
+  it('@DisallowNull should work properly.', () => {
+    @Serializable()
+    class SubA {
+      @JsonProperty()
+      readonly a: string = ''
+
+      @JsonProperty()
+      @Nullable()
+      readonly b: number = 0
+    }
+
+    @Serializable()
+    class A {
+      @JsonProperty()
+      readonly num: number = 0
+
+      @JsonProperty()
+      @Nullable()
+      readonly numNullable: number = 0
+
+      @JsonProperty()
+      @Nullable()
+      readonly numNullable2: number = 0
+
+      @JsonProperty()
+      readonly subA: SubA = new SubA()
+
+      @JsonProperty()
+      @Nullable()
+      readonly subANullable: SubA = new SubA()
+    }
+
+    const result = deserialize({
+      num: null,
+      numNullable: null,
+      numNullable2: '',
+      subA: null,
+      subANullable: null
+    }, A)
+
+    expect(result).toEqual({
+      num: 0,
+      numNullable: null,
+      numNullable2: 0,
+      subA: {
+        a: '',
+        b: 0
+      },
+      subANullable: null
     })
   })
 })

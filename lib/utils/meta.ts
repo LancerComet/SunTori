@@ -1,39 +1,15 @@
-/**
- * 创建 "用于存储被 @JsonProperty 装饰的属性的元数据" 的键名.
- */
-function createPropDataMetaKey (): string {
-  return 'serializer:props'
-}
+import { META_KEY_SERIALIZABLE } from '../config/meta'
 
 /**
- * 创建 "@Serializable" 键名.
- */
-function createSerializableMetaKey () {
-  return 'serializer:serializable'
-}
-
-/**
- * 创建 @Serializable 配置项的键名.
- *
- * @returns
- */
-function createSerializableOptionMetaKey () {
-  return 'serializer:option'
-}
-
-/**
- * 检测目标值是否被 @Serializable 装饰.
+ * Check whether a class is decorated by @Serializable.
  *
  * @param {*} target
  * @returns {boolean}
  */
 function checkIsSerializable (target: any): boolean {
-  return Reflect.hasOwnMetadata(createSerializableMetaKey(), target)
+  return Reflect.hasOwnMetadata(META_KEY_SERIALIZABLE, target)
 }
 
 export {
-  createPropDataMetaKey,
-  createSerializableMetaKey,
-  checkIsSerializable,
-  createSerializableOptionMetaKey
+  checkIsSerializable
 }

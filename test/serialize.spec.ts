@@ -2,8 +2,8 @@ import 'reflect-metadata'
 
 import { deserialize, JsonIgnore, JsonProperty, Serializable, serialize } from '../lib'
 
-describe('serialize testing.', () => {
-  it('serialize should work.', () => {
+describe('serialize 测试.', () => {
+  it('应当正确序列化目标对象.', () => {
     @Serializable()
     class User {
       @JsonProperty()
@@ -15,28 +15,23 @@ describe('serialize testing.', () => {
       @JsonProperty('user_address')
       @JsonIgnore()
       address: string = ''
-
-      @JsonProperty()
-      books: string[] = []
     }
 
     const instance = deserialize({
       name: 'LancerComet',
       age: 100,
-      user_address: 'The Mars.',
-      books: ['A', 'The Heaven']
+      user_address: 'The Mars.'
     }, User)
 
     expect(instance.name).toBe('LancerComet')
     expect(instance.age).toBe(100)
     expect(instance.address).toBe('The Mars.')
-    expect(instance.books).toEqual(['A', 'The Heaven'])
 
     const json = serialize(instance)
-    expect(JSON.stringify(json)).toBe('{"name":"LancerComet","age":100,"books":["A","The Heaven"]}')
+    expect(JSON.stringify(json)).toBe('{"name":"LancerComet","age":100}')
   })
 
-  it('The class that is not decorated by @Serializable can not be serialized.', () => {
+  it('非 @Serializable 对象无法序列化.', () => {
     class User {
       @JsonProperty()
       name: string = ''
