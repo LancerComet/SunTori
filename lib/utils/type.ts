@@ -1,15 +1,5 @@
 function isArray (target: any): boolean {
-  return typeof Array.isArray === 'function'
-    ? Array.isArray(target)
-    : Object.prototype.toString.call(target) === '[object Array]'
-}
-
-function isDate (target: any): boolean {
-  return Object.prototype.toString.call(target) === '[object Date]'
-}
-
-function isNumber (target: any): boolean {
-  return typeof target === 'number'
+  return Object.prototype.toString.call(target) === '[object Array]'
 }
 
 function isString (target: any): boolean {
@@ -20,24 +10,28 @@ function isBoolean (target: any): boolean {
   return typeof target === 'boolean'
 }
 
-function isNull (target: any) {
+function isNumber (target: any): boolean {
+  return typeof target === 'number'
+}
+
+function isUndefined (target: any): boolean {
+  return typeof target === 'undefined'
+}
+
+function isFunction (target: any): boolean {
+  return typeof target === 'function'
+}
+
+function isNull (target: any): boolean {
   return target === null
-}
-
-function getUndefined () {
-  return
-}
-
-function isUndefined (target: any) {
-  return target === getUndefined()
 }
 
 export {
   isArray,
-  isDate,
-  isNumber,
   isString,
   isBoolean,
-  isNull,
-  isUndefined
+  isNumber,
+  isUndefined,
+  isFunction,
+  isNull
 }

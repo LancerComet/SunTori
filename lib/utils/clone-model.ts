@@ -2,11 +2,11 @@ import { deserialize } from '../deserialize'
 import { serialize } from '../serialize'
 
 /**
- * Clone a model from an existing one.
+ * Clone a model.
  *
  * @template T
- * @param {T} model
- * @returns {T}
+ * @param {T} model Target.
+ * @returns {T} Cloned one.
  */
 function cloneModel<T> (model: T): T {
   if (model === null || typeof model !== 'object') {

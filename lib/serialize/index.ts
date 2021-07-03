@@ -1,5 +1,8 @@
+import { META_KEY_JSON_PROPERTY } from '../config/meta'
 import { IAllPropertiesMetaData, IJsonPropertyOption } from '../types'
-import { checkIsSerializable, createPropDataMetaKey } from '../utils/meta'
+import { checkIsSerializable } from '../utils/meta'
+import { createPlainObject } from '../utils/object'
+import { isBoolean, isNull, isNumber, isString, isUndefined } from '../utils/type'
 
 /**
  * Serialize model class to json.
@@ -13,9 +16,9 @@ function serialize <T = any> (target: any): T {
   const isSerializable = checkIsSerializable(target.constructor)
   if (!isSerializable) {
     console && console.warn && console.warn(
-      '[lib.serializer] 此对象不可被序列化, 请确定已使用 @Serializable 进行装饰:', target.constructor
+      '[Serializer] This class can not be serialized, please make sure @Serializable is placed:', target.constructor
     )
-    return Object.create(null)
+    return createPlainObject()
   }
 
   const clone = composeTargetObject(target)
@@ -23,17 +26,26 @@ function serialize <T = any> (target: any): T {
 }
 
 /**
- * 构建待反序列化的对象
+ * Build the serialized data.
  *
  * @param {*} sourceObject
  */
-function composeTargetObject (sourceObject: any): { [key: string]: any } | string | number | boolean {
-  if (typeof sourceObject === 'string' || typeof sourceObject === 'number' || typeof sourceObject === 'boolean') {
+function composeTargetObject (sourceObject: any): { [key: string]: any } | number | boolean | string {
+  // Basic types just return itself.
+  if (isString(sourceObject) || isNumber(sourceObject) || isBoolean(sourceObject)) {
     return sourceObject
   }
 
-  const clone: any = Object.create(null)
-  const propsMeta: IAllPropertiesMetaData = Reflect.getMetadata(createPropDataMetaKey(), sourceObject) || {}
+  if (isUndefined(sourceObject)) {
+    return undefined
+  }
+
+  if (isNull(sourceObject)) {
+    return null
+  }
+
+  const clone = createPlainObject()
+  const propsMeta: IAllPropertiesMetaData = Reflect.getMetadata(META_KEY_JSON_PROPERTY, sourceObject) || {}
 
   Object.keys(sourceObject)
     .filter(key => !checkIsIgnoreProp(sourceObject, key))
@@ -64,7 +76,7 @@ function composeTargetObject (sourceObject: any): { [key: string]: any } | strin
 }
 
 /**
- * Decorated property will be ignored when serializing.
+ * Decorate a property that is going to be ignored while serializing.
  */
 function JsonIgnore () {
   return function (targetClass: object, propName: string) {
@@ -81,12 +93,6 @@ function checkIsIgnoreProp (targetClass: object, propName: string): boolean {
   return Reflect.hasMetadata(`serializer:json-ignore:${propName}`, targetClass)
 }
 
-/**
- * 获取属性的目标键名
- *
- * @param propsMeta
- * @param propName
- */
 function getTargetKey (propsMeta: IAllPropertiesMetaData, propName: string): string {
   const propMeta: IJsonPropertyOption = propsMeta[propName] || {}
   return propMeta.name || propName
