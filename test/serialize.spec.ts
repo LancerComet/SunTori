@@ -2,8 +2,8 @@ import 'reflect-metadata'
 
 import { deserialize, JsonIgnore, JsonProperty, Serializable, serialize } from '../lib'
 
-describe('serialize 测试.', () => {
-  it('应当正确序列化目标对象.', () => {
+describe('Serializer testing.', () => {
+  it('Do a very simple serialization.', () => {
     @Serializable()
     class User {
       @JsonProperty()
@@ -27,11 +27,34 @@ describe('serialize 测试.', () => {
     expect(instance.age).toBe(100)
     expect(instance.address).toBe('The Mars.')
 
-    const json = serialize(instance)
-    expect(JSON.stringify(json)).toBe('{"name":"LancerComet","age":100}')
+    expect(serialize(instance)).toEqual({
+      name: 'LancerComet',
+      age: 100
+    })
+
+    @Serializable()
+    class Book {
+      @JsonProperty('book_name')
+      name: string = ''
+
+      @JsonProperty('book_pages')
+      pages: number = 0
+
+      @JsonProperty()
+      author: string = 'winnie'
+    }
+
+    const json = {
+      book_name: 'He has changed China.',
+      book_pages: 114514,
+      author: 'elder'
+    }
+
+    const model = deserialize(json, Book)
+    expect(serialize(model)).toEqual(json)
   })
 
-  it('非 @Serializable 对象无法序列化.', () => {
+  it('A class which is not decorated by @Serializable can not be serialized.', () => {
     class User {
       @JsonProperty()
       name: string = ''
@@ -54,7 +77,7 @@ describe('serialize 测试.', () => {
     expect(json).toEqual({})
   })
 
-  it('应当正确处理嵌套类型.', () => {
+  it('Nested types should be handled properly.', () => {
     @Serializable()
     class Book {
       @JsonProperty()
@@ -137,28 +160,6 @@ describe('serialize 测试.', () => {
   })
 
   it('当被序列化的对象通过 JsonProperty 指定了 name 时，序列化时应当取用指定的 name.', () => {
-    @Serializable()
-    class Book {
-      @JsonProperty('book_name')
-      name: string = ''
 
-      @JsonProperty('book_pages')
-      pages: number = 0
-
-      @JsonProperty()
-      author: string = 'winnie'
-    }
-
-    const serverData = {
-      book_name: 'He has changed China.',
-      book_pages: 114514,
-      author: 'elder'
-    }
-
-    const instance = deserialize(serverData, Book)
-
-    const source = serialize(instance)
-
-    expect(source).toEqual(serverData)
   })
 })
