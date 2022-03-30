@@ -1,26 +1,53 @@
-# @vert/serializer
+# SunTori
 
-[![Serializer](https://github.com/vuevert/Vert-Serializer/workflows/Test/badge.svg)](https://github.com/LancerComet/vue-jsonp/actions)
+[![SunTori](https://github.com/vuevert/Vert-Serializer/workflows/Test/badge.svg)](https://github.com/vuevert/Vert-Serializer/actions)
 
-JSON serialization and deserialization.
+SunTori is a JSON serializer for TypeScript.
 
-## Quick Start
+![SunTori](suntori.png)
+
+## Features
+
+ - JSON <--- Mapping ---> Class.
+ - JSON fields name <--- Mapping ---> Class props name.
+ - Runtime typesafe.
+ - Deal with raw strings and dynamic keys.
+
+## First of all
+
+SunTori depends on the very feature `emitDecoratorMetadata` which was introduced to TypeScript, so keep in mind:
+
+ - Not available in pure JavaScript enviroment. You have to use it with TypeScript.
+ - Not available for ESBuild because ESBuild doesn't emit decorator metadata.
+
+## Installation
+
+Install `reflect-metadata:`
 
 ```
 npm install reflect-metadata --save
 ```
 
-Import `Reflect-Metadata` first:
+Import `reflect-metadata` in the whole project entry:
 
 ```typescript
 // Project entry.
 import 'reflect-metadata'
 ```
 
+Remember to enable this two things in `tsconfig.json`:
+
+```json
+"emitDecoratorMetadata": true,
+"experimentalDecorators": true
+```
+
+## Usage
+
 ### Deserialization.
 
 ```typescript
-import { Serializable, JsonProperty, deserialize } from '@vert/serializer'
+import { Serializable, JsonProperty, deserialize } from '@lancercomet/suntori'
 
 @Serializable()
 class User {
@@ -45,7 +72,7 @@ const doge = deserialize(dataSource, User)  // User
 ### Array-typed deserialization.
 
 ```typescript
-import { Serializable, JsonProperty, deserialize } from '@vert/serializer'
+import { Serializable, JsonProperty, deserialize } from '@lancercomet/suntori'
 
 @Serializable()
 class User {
@@ -107,7 +134,7 @@ const json = serialize(doge)  // json should be "equal" to dataSource.
 ### @JsonString
 
 ```ts
-import { Serializable, JsonProperty, deserialize, JsonString } from '@vert/serializer'
+import { Serializable, JsonProperty, deserialize, JsonString } from '@lancercomet/suntori'
 
 @Serializable()
 class A {
@@ -140,7 +167,7 @@ const b = deserialize({
 ### @DynamicKey
 
 ```ts
-import { Serializable, JsonProperty, deserialize, DynamicKey } from '@vert/serializer'
+import { Serializable, JsonProperty, deserialize, DynamicKey } from '@lancercomet/suntori'
 
 @Serializable()
 class A {
