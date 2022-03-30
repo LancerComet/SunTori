@@ -1,10 +1,10 @@
 # SunTori
 
-[![SunTori](https://github.com/vuevert/Vert-Serializer/workflows/Test/badge.svg)](https://github.com/vuevert/Vert-Serializer/actions)
+[![SunTori](https://github.com/LancerComet/SunTori/workflows/Test/badge.svg)](https://github.com/LancerComet/SunTori/actions)
 
 SunTori is a JSON serializer for TypeScript.
 
-![SunTori](suntori.png)
+![SunTori](https://raw.githubusercontent.com/LancerComet/SunTori/master/suntori.png)
 
 ## Features
 
