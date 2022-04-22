@@ -47,3 +47,7 @@ class User {
   address: UserAddress[] = []
 }
 ```
+
+## License
+
+Apache-2.0

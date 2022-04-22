@@ -10,3 +10,7 @@ SunTori is a JSON serializer for TypeScript.
 
  - SunTori: Core package, the serializer itself.
  - Generator: A codegen to create SunTori codes from JSON.
+
+## License
+
+Apache-2.0
