@@ -5,12 +5,12 @@ name: Test
 on: [push, pull_request]
 
 jobs:
-  test-core-package:
+  test-suntori:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
 
     steps:
       - name: Checkout code
@@ -21,8 +21,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Test core package
-        run: npm ci
+      - name: Test SunTori
+        working-directory: ./packages/suntori
+        run: npm ci --quiet --no-progress && npm test
 
-      - name: Run test
-        run: npm test
+      - name: Test Generator
+        working-directory: ./packages/generator
+        run: npm ci --quiet --no-progress && npm test

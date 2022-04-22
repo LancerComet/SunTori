@@ -2,6 +2,12 @@ import { META_KEY_DISALLOW_NULL, META_KEY_DYNAMIC_KEY, META_KEY_JSON_STRING } fr
 import { createPlainObject } from '../utils/object'
 
 /**
+ * MetaRegistry type.
+ * This kinda registry is used to indicate which prop is decorated.
+ */
+type MetaRegistry = { [propName: string]: true }
+
+/**
  * Define a decorator.
  *
  * @param metaKey
@@ -116,7 +122,6 @@ function Nullable () {
  */
 function checkMetaRegistryHasProp (metaKey: string, propName: string, instance: any): boolean {
   const metaRegistry = Reflect.getMetadata(metaKey, instance)
-  // tslint:disable-next-line:whitespace
   return metaRegistry?.[propName] === true
 }
 
@@ -126,10 +131,3 @@ export {
   Nullable,
   checkMetaRegistryHasProp
 }
-
-/**
- * MetaRegistry type.
- * This kinda registry is used to indicate which prop is decorated.
- */
-// tslint:disable-next-line:interface-over-type-literal
-type MetaRegistry = { [propName: string]: true }

@@ -1,0 +1,50 @@
+{
+  "name": "@lancercomet/suntori.generator",
+  "version": "1.0.0",
+  "description": "A codegen to create SunTori codes from JSON.",
+  "main": "index.js",
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "dependencies": {
+    "camelcase": "^6.3.0",
+    "json-to-ast": "^2.1.0",
+    "pascal-case": "^3.1.2",
+    "typescript": "^4.6.3",
+    "typescript-formatter": "^7.2.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "@types/json-to-ast": "^2.1.2",
+    "@typescript-eslint/eslint-plugin": "^5.20.0",
+    "@typescript-eslint/parser": "^5.20.0",
+    "eslint": "^8.13.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "jest": "^27.5.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LancerComet/SunTori.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "pretest": "npm run build",
+    "prepublish": "npm run test"
+  },
+  "keywords": [
+    "serializer",
+    "typescript",
+    "codegen",
+    "generator"
+  ],
+  "author": {
+    "name": "LancerComet",
+    "email": "chw644@hotmail.com"
+  },
+  "license": "Apache-2.0"
+}
