@@ -1,6 +1,7 @@
 # SunTori
 
 [![SunTori](https://github.com/LancerComet/SunTori/workflows/Test/badge.svg)](https://github.com/LancerComet/SunTori/actions)
+[![npm version](https://badge.fury.io/js/@lancercomet%2Fsuntori.svg)](https://badge.fury.io/js/@lancercomet%2Fsuntori)
 
 SunTori is a Typescript JSON de/serializer to ensure everything is safe at runtime.
 

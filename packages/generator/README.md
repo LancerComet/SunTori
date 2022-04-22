@@ -1,5 +1,8 @@
 # SunTori codegen
 
+[![SunTori](https://github.com/LancerComet/SunTori/workflows/Test/badge.svg)](https://github.com/LancerComet/SunTori/actions)
+[![npm version](https://badge.fury.io/js/@lancercomet%2Fsuntori.generator.svg)](https://badge.fury.io/js/@lancercomet%2Fsuntori.generator)
+
 A codegen to create [SunTori](https://github.com/LancerComet/SunTori/tree/master/packages/suntori) codes from JSON.
 
 ```ts
@@ -45,6 +48,37 @@ class User {
     type: UserAddress
   })
   address: UserAddress[] = []
+}
+```
+
+## Options
+
+ - `jsonObject: never` The JSON payload. Should be a JavaScript Object.
+ - `rootClassName: string = 'Root'` The name for generated class. And it will be used as prefix for all subclasses.
+ - `useCamelCase: boolean = true` Use `camelCase` during code generation.
+ - `addReadonly: boolean = true` Add `readonly` modifier to all members of a class.
+
+## About null
+
+All `null` JSON fields would be converted to the `unknown`, as well as empty arrays.
+
+```ts
+generate({
+  jsonObject: {
+    a: null,
+    b: []
+  }
+})
+
+// To
+
+@Serializable()
+class Root {
+  @JsonProperty('a')
+  a: unknown = null
+
+  @JsonProperty('b')
+  b: unknown[] = []
 }
 ```
 
