@@ -221,7 +221,3 @@ console.log(a.num)           // 0
 console.log(a.numNullable)   // null
 console.log(a.numNullable2)  // 0, only got null if payload were null.
 ```
-
-## License 
-
-MIT
