@@ -1,4 +1,4 @@
-import { META_KEY_JSON_PROPERTY } from '../config/meta'
+import { META_KEY_JSON_PROPERTY, META_KEY_JSON_IGNORE } from '../config/meta'
 import { IAllPropertiesMetaData, IJsonPropertyOption } from '../types'
 import { checkIsSerializable } from '../utils/meta'
 import { createPlainObject } from '../utils/object'
@@ -16,7 +16,7 @@ function serialize <T = any> (target: any): T {
   const isSerializable = checkIsSerializable(target.constructor)
   if (!isSerializable) {
     console && console.warn && console.warn(
-      '[Serializer] This class can not be serialized, please make sure @Serializable is placed:', target.constructor
+      '[SunTori] This class can not be serialized, please make sure @Serializable is placed:', target.constructor
     )
     return createPlainObject()
   }
@@ -80,7 +80,7 @@ function composeTargetObject (sourceObject: any): { [key: string]: any } | numbe
  */
 function JsonIgnore () {
   return function (targetClass: object, propName: string) {
-    Reflect.defineMetadata(`serializer:json-ignore:${propName}`, true, targetClass)
+    Reflect.defineMetadata(`${META_KEY_JSON_IGNORE}:${propName}`, true, targetClass)
   }
 }
 
@@ -90,7 +90,7 @@ export {
 }
 
 function checkIsIgnoreProp (targetClass: object, propName: string): boolean {
-  return Reflect.hasMetadata(`serializer:json-ignore:${propName}`, targetClass)
+  return Reflect.hasMetadata(`${META_KEY_JSON_IGNORE}:${propName}`, targetClass)
 }
 
 function getTargetKey (propsMeta: IAllPropertiesMetaData, propName: string): string {

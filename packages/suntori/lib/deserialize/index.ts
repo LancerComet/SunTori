@@ -1,5 +1,5 @@
 import {
-  META_KEY_DISALLOW_NULL,
+  META_KEY_NULLABLE,
   META_KEY_DYNAMIC_KEY,
   META_KEY_JSON_PROPERTY,
   META_KEY_JSON_STRING,
@@ -121,7 +121,7 @@ function createModelValueFromJson (
   const expectedType: any = propMetaData.type || Reflect.getMetadata('design:type', instance, propName)
   const fallbackValue = instance[propName]
 
-  const isNullable = checkMetaRegistryHasProp(META_KEY_DISALLOW_NULL, propName, instance)
+  const isNullable = checkMetaRegistryHasProp(META_KEY_NULLABLE, propName, instance)
   if (payload === null) {
     return isNullable ? null : fallbackValue
   }
@@ -152,7 +152,7 @@ function createModelValueFromJson (
     try {
       payload = JSON.parse(payload)
     } catch (error) {
-      console.error(`[Serializer] Failed to parse JsonString prop "${propName}", default value returned.`)
+      console.error(`[SunTori] Failed to parse JsonString prop "${propName}", default value returned.`)
       return fallbackValue
     }
   }

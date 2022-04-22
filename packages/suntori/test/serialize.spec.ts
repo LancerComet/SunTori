@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import 'reflect-metadata'
 
 import { deserialize, JsonIgnore, JsonProperty, Serializable, serialize } from '../lib'
@@ -7,14 +8,14 @@ describe('Serializer testing.', () => {
     @Serializable()
     class User {
       @JsonProperty()
-      name: string = ''
+        name: string = ''
 
       @JsonProperty()
-      age: number = 0
+        age: number = 0
 
       @JsonProperty('user_address')
       @JsonIgnore()
-      address: string = ''
+        address: string = ''
     }
 
     const instance = deserialize({
@@ -35,13 +36,13 @@ describe('Serializer testing.', () => {
     @Serializable()
     class Book {
       @JsonProperty('book_name')
-      name: string = ''
+        name: string = ''
 
       @JsonProperty('book_pages')
-      pages: number = 0
+        pages: number = 0
 
       @JsonProperty()
-      author: string = 'winnie'
+        author: string = 'winnie'
     }
 
     const json = {
@@ -57,14 +58,14 @@ describe('Serializer testing.', () => {
   it('A class which is not decorated by @Serializable can not be serialized.', () => {
     class User {
       @JsonProperty()
-      name: string = ''
+        name: string = ''
 
       @JsonProperty()
-      age: number = 0
+        age: number = 0
 
       @JsonProperty('user_address')
       @JsonIgnore()
-      address: string = ''
+        address: string = ''
     }
 
     const instance = deserialize({
@@ -81,30 +82,30 @@ describe('Serializer testing.', () => {
     @Serializable()
     class Book {
       @JsonProperty()
-      name: string = ''
+        name: string = ''
 
       @JsonProperty('book_pages')
       @JsonIgnore()
-      pages: number = 0
+        pages: number = 0
     }
 
     @Serializable()
     class User {
       @JsonProperty()
-      name: string = ''
+        name: string = ''
 
       @JsonProperty()
-      age: number = 0
+        age: number = 0
 
       @JsonProperty('user_address')
       @JsonIgnore()
-      address: string = ''
+        address: string = ''
 
       @JsonProperty({
         name: 'books',
         type: Book
       })
-      books: Book[] = []
+        books: Book[] = []
     }
 
     @Serializable()
@@ -113,7 +114,7 @@ describe('Serializer testing.', () => {
         name: 'users',
         type: User
       })
-      users: User[] = []
+        users: User[] = []
     }
 
     const instance = deserialize({
@@ -157,9 +158,5 @@ describe('Serializer testing.', () => {
     }
 
     expect(source).toEqual(target)
-  })
-
-  it('当被序列化的对象通过 JsonProperty 指定了 name 时，序列化时应当取用指定的 name.', () => {
-
   })
 })

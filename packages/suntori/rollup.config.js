@@ -8,7 +8,7 @@ export default {
     {
       file: './dist/index.js',
       format: 'umd',
-      name: 'Serializer'
+      name: 'SunTori'
     },
     {
       file: './dist/index.esm.js',
@@ -25,8 +25,8 @@ export default {
           target: 'es5'
         },
         include: [
-          "./lib",
-          "./node_modules/reflect-metadata"
+          './lib',
+          './node_modules/reflect-metadata'
         ]
       }
     })
