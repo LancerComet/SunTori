@@ -18,7 +18,12 @@ const getJsonString = (jsonObject: unknown): string => {
   }
 }
 
-const walkObjectNode = (className: string, node: ObjectNode): ts.ClassDeclaration[] => {
+const walkObjectNode = (
+  className: string,
+  node: ObjectNode,
+  useCamelCase: boolean,
+  addReadonly: boolean
+): ts.ClassDeclaration[] => {
   const members: ts.ClassElement[] = []
   const classDefs: ts.ClassDeclaration[] = []
 
@@ -26,12 +31,20 @@ const walkObjectNode = (className: string, node: ObjectNode): ts.ClassDeclaratio
     const jsonKey = child.key.value
     const jsonValueNode = child.value
 
+    const classKeyName = useCamelCase
+      ? camelcase(jsonKey)
+      : jsonKey
+
+    const modifiers = addReadonly
+      ? [ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword)]
+      : []
+
     if (jsonValueNode.type === 'Literal') {
       members.push(
         ts.factory.createPropertyDeclaration(
           [createJsonPropertyDecorator(jsonKey)],
-          undefined,
-          ts.factory.createIdentifier(camelcase(jsonKey)),
+          modifiers,
+          ts.factory.createIdentifier(classKeyName),
           undefined,
           ts.factory.createKeywordTypeNode(
             getSyntaxKind(jsonValueNode.value)
@@ -44,12 +57,12 @@ const walkObjectNode = (className: string, node: ObjectNode): ts.ClassDeclaratio
 
     if (jsonValueNode.type === 'Object') {
       const childClassName = `${className}${pascalCase(jsonKey)}`
-      classDefs.push(...walkObjectNode(childClassName, jsonValueNode))
+      classDefs.push(...walkObjectNode(childClassName, jsonValueNode, useCamelCase, addReadonly))
       members.push(
         ts.factory.createPropertyDeclaration(
           [createJsonPropertyDecorator(jsonKey)],
-          undefined,
-          ts.factory.createIdentifier(camelcase(jsonKey)),
+          modifiers,
+          ts.factory.createIdentifier(classKeyName),
           undefined,
           ts.factory.createTypeReferenceNode(
             ts.factory.createIdentifier(childClassName),
@@ -71,8 +84,8 @@ const walkObjectNode = (className: string, node: ObjectNode): ts.ClassDeclaratio
         members.push(
           ts.factory.createPropertyDeclaration(
             [createJsonPropertyDecorator(jsonKey)],
-            undefined,
-            ts.factory.createIdentifier(camelcase(jsonKey)),
+            modifiers,
+            ts.factory.createIdentifier(classKeyName),
             undefined,
             ts.factory.createArrayTypeNode(
               ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)
@@ -87,8 +100,8 @@ const walkObjectNode = (className: string, node: ObjectNode): ts.ClassDeclaratio
         members.push(
           ts.factory.createPropertyDeclaration(
             [createJsonPropertyDecorator(jsonKey)],
-            undefined,
-            ts.factory.createIdentifier(camelcase(jsonKey)),
+            modifiers,
+            ts.factory.createIdentifier(classKeyName),
             undefined,
             ts.factory.createArrayTypeNode(
               ts.factory.createKeywordTypeNode(
@@ -103,7 +116,7 @@ const walkObjectNode = (className: string, node: ObjectNode): ts.ClassDeclaratio
 
       if (arrayFirstChildNode.type === 'Object') {
         const childClassName = `${className}${pascalCase(jsonKey)}`
-        classDefs.push(...walkObjectNode(childClassName, arrayFirstChildNode))
+        classDefs.push(...walkObjectNode(childClassName, arrayFirstChildNode, useCamelCase, addReadonly))
 
         const childClassIdentifier = ts.factory.createIdentifier(childClassName)
 
@@ -132,8 +145,8 @@ const walkObjectNode = (className: string, node: ObjectNode): ts.ClassDeclaratio
                 )
               )
             ],
-            undefined,
-            ts.factory.createIdentifier(camelcase(jsonKey)),
+            modifiers,
+            ts.factory.createIdentifier(classKeyName),
             undefined,
             ts.factory.createArrayTypeNode(
               ts.factory.createTypeReferenceNode(
@@ -177,9 +190,27 @@ const generate = (param: {
    * @default Root
    */
   rootClassName?: string
+
+  /**
+   * Use `camelCase` during code generation.
+   *
+   * @type {[boolean]}
+   * @default true
+   */
+  useCamelCase?: boolean
+
+  /**
+   * Add `readonly` modifier to all members of a class.
+   *
+   * @type {[boolean]}
+   * @default false
+   */
+  addReadonly?: boolean
 }): string => {
   const jsonObject = param.jsonObject
   const rootClassName = param.rootClassName ?? 'Root'
+  const useCamelCase = param.useCamelCase ?? true
+  const addReadonly = param.addReadonly ?? false
 
   if (typeof jsonObject !== 'object') {
     throw new Error('A JSON object must be provided.')
@@ -193,7 +224,10 @@ const generate = (param: {
   }
 
   let result = ''
-  const classDefs = walkObjectNode(rootClassName, rootValueNode)
+  const classDefs = walkObjectNode(
+    rootClassName, rootValueNode,
+    useCamelCase, addReadonly
+  )
   classDefs.forEach(item => {
     result += printTsCode(item) + '\n\n'
   })

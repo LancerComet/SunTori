@@ -1,14 +1,15 @@
 # SunTori
 
 [![SunTori](https://github.com/LancerComet/SunTori/workflows/Test/badge.svg)](https://github.com/LancerComet/SunTori/actions)
+[![npm version](https://badge.fury.io/js/@lancercomet%2Fsuntori.svg)](https://badge.fury.io/js/@lancercomet%2Fsuntori)
 
-SunTori is a JSON serializer for TypeScript.
+SunTori is a Typescript JSON de/serializer to ensure everything is safe at runtime.
 
 ![SunTori](https://raw.githubusercontent.com/LancerComet/SunTori/master/suntori.png)
 
 ## Packages
 
- - SunTori: Core package, the serializer itself.
+ - SunTori: The SunTori core package.
  - Generator: A codegen to create SunTori codes from JSON.
 
 ## License

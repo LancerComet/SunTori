@@ -1,7 +1,7 @@
 {
   "name": "@lancercomet/suntori",
   "version": "1.0.2",
-  "description": "A Typescript JSON serializer.",
+  "description": "A Typescript JSON de/serializer to ensure everything is safe at runtime",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
   "scripts": {
@@ -16,6 +16,7 @@
     "README.md"
   ],
   "keywords": [
+    "deserializer",
     "serializer",
     "typescript"
   ],

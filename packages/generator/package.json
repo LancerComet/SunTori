@@ -37,6 +37,7 @@
     "prepublish": "npm run test"
   },
   "keywords": [
+    "deserializer",
     "serializer",
     "typescript",
     "codegen",

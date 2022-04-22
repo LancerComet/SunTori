@@ -1,8 +1,9 @@
 # SunTori
 
 [![SunTori](https://github.com/LancerComet/SunTori/workflows/Test/badge.svg)](https://github.com/LancerComet/SunTori/actions)
+[![npm version](https://badge.fury.io/js/@lancercomet%2Fsuntori.svg)](https://badge.fury.io/js/@lancercomet%2Fsuntori)
 
-SunTori is a JSON serializer for TypeScript.
+SunTori is a Typescript JSON de/serializer to ensure everything is safe at runtime.
 
 ![SunTori](https://raw.githubusercontent.com/LancerComet/SunTori/master/suntori.png)
 
@@ -10,7 +11,7 @@ SunTori is a JSON serializer for TypeScript.
 
  - JSON <--- Mapping ---> Class.
  - JSON fields name <--- Mapping ---> Class props name.
- - Runtime typesafe.
+ - Typesafe at runtime.
  - Deal with raw strings and dynamic keys.
 
 ## First of all

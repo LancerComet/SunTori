@@ -1,4 +1,4 @@
-import { META_KEY_DISALLOW_NULL, META_KEY_DYNAMIC_KEY, META_KEY_JSON_STRING } from '../config/meta'
+import { META_KEY_NULLABLE, META_KEY_DYNAMIC_KEY, META_KEY_JSON_STRING } from '../config/meta'
 import { createPlainObject } from '../utils/object'
 
 /**
@@ -110,7 +110,7 @@ function DynamicKey () {
  * a.b  // null
  */
 function Nullable () {
-  return defineDecorator(META_KEY_DISALLOW_NULL)
+  return defineDecorator(META_KEY_NULLABLE)
 }
 
 /**
