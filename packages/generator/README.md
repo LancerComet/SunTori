@@ -1,6 +1,6 @@
 # SunTori codegen
 
-A codegen to create [SunTori](https://github.com/LancerComet/SunTori/tree/master/packages/SunTori) codes from JSON.
+A codegen to create [SunTori](https://github.com/LancerComet/SunTori/tree/master/packages/suntori) codes from JSON.
 
 ```ts
 import { generate } from '@lancercomet/suntori.generator'
