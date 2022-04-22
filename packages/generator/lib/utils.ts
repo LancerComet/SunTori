@@ -1,4 +1,4 @@
-import ts, { TsConfigSourceFile } from 'typescript'
+import ts from 'typescript'
 
 const isString = (target: unknown): target is string => {
   return typeof target === 'string'

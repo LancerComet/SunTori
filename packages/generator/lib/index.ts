@@ -18,26 +18,6 @@ const getJsonString = (jsonObject: unknown): string => {
   }
 }
 
-const main = (rootJsonObject: unknown) => {
-  if (typeof rootJsonObject !== 'object') {
-    throw new Error('A JSON object must be provided.')
-  }
-
-  const jsonString = getJsonString(rootJsonObject)
-  const rootValueNode = jsonParse(jsonString)
-
-  if (rootValueNode.type !== 'Object') {
-    throw new Error('The root element must be an object-typed json.')
-  }
-
-  let result = ''
-  const classDefs = walkObjectNode('Root', rootValueNode)
-  classDefs.forEach(item => {
-    result += printTsCode(item) + '\n\n'
-  })
-  console.log(result)
-}
-
 const walkObjectNode = (className: string, node: ObjectNode): ts.ClassDeclaration[] => {
   const members: ts.ClassElement[] = []
   const classDefs: ts.ClassDeclaration[] = []
@@ -65,6 +45,23 @@ const walkObjectNode = (className: string, node: ObjectNode): ts.ClassDeclaratio
     if (jsonValueNode.type === 'Object') {
       const childClassName = `${className}${pascalCase(jsonKey)}`
       classDefs.push(...walkObjectNode(childClassName, jsonValueNode))
+      members.push(
+        ts.factory.createPropertyDeclaration(
+          [createJsonPropertyDecorator(jsonKey)],
+          undefined,
+          ts.factory.createIdentifier(camelcase(jsonKey)),
+          undefined,
+          ts.factory.createTypeReferenceNode(
+            ts.factory.createIdentifier(childClassName),
+            undefined
+          ),
+          ts.factory.createNewExpression(
+            ts.factory.createIdentifier(childClassName),
+            undefined,
+            []
+          )
+        )
+      )
       continue
     }
 
@@ -77,7 +74,9 @@ const walkObjectNode = (className: string, node: ObjectNode): ts.ClassDeclaratio
             undefined,
             ts.factory.createIdentifier(camelcase(jsonKey)),
             undefined,
-            ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword),
+            ts.factory.createArrayTypeNode(
+              ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword)
+            ),
             ts.factory.createArrayLiteralExpression([], false)
           )
         )
@@ -148,33 +147,60 @@ const walkObjectNode = (className: string, node: ObjectNode): ts.ClassDeclaratio
     }
   }
 
-  const classDef = ts.factory.createClassDeclaration(
+  classDefs.push(ts.factory.createClassDeclaration(
     [createSerializableDecorator()],
     undefined,
     ts.factory.createIdentifier(className),
     undefined,
     undefined,
     members
-  )
-  classDefs.push(classDef)
+  ))
 
   return classDefs
 }
 
-main({
-  name: 'John Smith',
-  age: 100,
-  is_dead: true,
-  addresses: [
-    {
-      name: 'Home',
-      location: 'The earth'
-    }
-  ],
-  numbers: [1, 2, 3],
-  type: null,
-  meta: {
-    bulk: { is_finished: true },
-    closed: false
+/**
+ * Generate SunTori codes.
+ */
+const generate = (param: {
+  /**
+   * JSON object.
+   *
+   * @type {never}
+   */
+  jsonObject: never
+
+  /**
+   * Classname for the entire json.
+   *
+   * @type {[string]}
+   * @default Root
+   */
+  rootClassName?: string
+}): string => {
+  const jsonObject = param.jsonObject
+  const rootClassName = param.rootClassName ?? 'Root'
+
+  if (typeof jsonObject !== 'object') {
+    throw new Error('A JSON object must be provided.')
   }
-})
+
+  const jsonString = getJsonString(jsonObject)
+  const rootValueNode = jsonParse(jsonString)
+
+  if (rootValueNode.type !== 'Object') {
+    throw new Error('The root element must be an object-typed json.')
+  }
+
+  let result = ''
+  const classDefs = walkObjectNode(rootClassName, rootValueNode)
+  classDefs.forEach(item => {
+    result += printTsCode(item) + '\n\n'
+  })
+
+  return result
+}
+
+export {
+  generate
+}
