@@ -8,7 +8,7 @@ A codegen to create [SunTori](https://github.com/LancerComet/SunTori/tree/master
 ```ts
 import { generate } from '@lancercomet/suntori.generator'
 
-const result = generate({
+const result = await generate({
   jsonObject: {
     name: 'John Smith',
     age: 200,
@@ -63,7 +63,7 @@ class User {
 All `null` JSON fields would be converted to the `unknown`, as well as empty arrays.
 
 ```ts
-generate({
+await generate({
   jsonObject: {
     a: null,
     b: []
