@@ -8,7 +8,8 @@ import {
   getInitializer,
   getSyntaxKind,
   printTsCode
-} from './utils'
+} from './tsc'
+import { codeFormat } from './format'
 
 const getJsonString = (jsonObject: unknown): string => {
   try {
@@ -175,13 +176,13 @@ const walkObjectNode = (
 /**
  * Generate SunTori codes.
  */
-const generate = (param: {
+const generate = async (param: {
   /**
    * JSON object.
    *
    * @type {never}
    */
-  jsonObject: never
+  jsonObject: any
 
   /**
    * Classname for the entire json.
@@ -206,7 +207,7 @@ const generate = (param: {
    * @default false
    */
   addReadonly?: boolean
-}): string => {
+}): Promise<string> => {
   const jsonObject = param.jsonObject
   const rootClassName = param.rootClassName ?? 'Root'
   const useCamelCase = param.useCamelCase ?? true
@@ -229,10 +230,14 @@ const generate = (param: {
     useCamelCase, addReadonly
   )
   classDefs.forEach(item => {
-    result += printTsCode(item) + '\n\n'
+    result += printTsCode(item) + '\n'
   })
 
-  return result
+  try {
+    return codeFormat(result)
+  } catch (error) {
+    throw new Error('Failed to format code: ' + (error as Error).message)
+  }
 }
 
 export {

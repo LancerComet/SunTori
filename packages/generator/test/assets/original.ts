@@ -5,7 +5,6 @@ class UserAddresses {
     @JsonProperty("location")
     location: string = "";
 }
-
 @Serializable()
 class UserMeta {
     @JsonProperty("leaveTimes")
@@ -13,7 +12,6 @@ class UserMeta {
     @JsonProperty("dates")
     dates: unknown[] = [];
 }
-
 @Serializable()
 class User {
     @JsonProperty("name")
@@ -31,4 +29,3 @@ class User {
     @JsonProperty("ranks")
     ranks: number[] = [];
 }
-
