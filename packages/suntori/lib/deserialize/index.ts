@@ -3,7 +3,9 @@ import {
   META_KEY_DYNAMIC_KEY,
   META_KEY_JSON_PROPERTY,
   META_KEY_JSON_STRING,
-  META_KEY_SERIALIZABLE
+  META_KEY_SERIALIZABLE,
+  META_KEY_PARSE_INT,
+  META_KEY_PARSE_FLOAT
 } from '../config/meta'
 import { ConstructorOf, IAllPropertiesMetaData, IJsonPropertyOption } from '../types'
 import { checkIsSerializable } from '../utils/meta'
@@ -127,6 +129,21 @@ function createModelValueFromJson (
   }
 
   if (expectedType === Number) {
+    const doIntParse = checkMetaRegistryHasProp(META_KEY_PARSE_INT, propName, instance)
+    const doFloatParse = checkMetaRegistryHasProp(META_KEY_PARSE_FLOAT, propName, instance)
+
+    if (isString(payload)) {
+      if (doIntParse) {
+        const parsedValue = parseInt(payload)
+        return isNaN(parsedValue) ? fallbackValue : parsedValue
+      }
+
+      if (doFloatParse) {
+        const parsedValue = parseFloat(payload)
+        return isNaN(parsedValue) ? fallbackValue : parsedValue
+      }
+    }
+
     return isNumber(payload) ? payload : fallbackValue
   }
 

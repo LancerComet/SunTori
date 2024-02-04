@@ -1,4 +1,4 @@
-import { META_KEY_NULLABLE, META_KEY_DYNAMIC_KEY, META_KEY_JSON_STRING } from '../config/meta'
+import { META_KEY_NULLABLE, META_KEY_DYNAMIC_KEY, META_KEY_JSON_STRING, META_KEY_PARSE_INT, META_KEY_PARSE_FLOAT } from '../config/meta'
 import { createPlainObject } from '../utils/object'
 
 /**
@@ -114,6 +114,44 @@ function Nullable () {
 }
 
 /**
+ * A prop that decorated by this decorator will be parsed as int in force.
+ *
+ * @example
+ * @Serializable()
+ * class A {
+ *   @JsonProperty()
+ *   @ParseInt()
+ *   readonly id: number = 0
+ * }
+ *
+ * const a = deserialize({
+ *   id: '10'
+ * }, A)
+ */
+function ParseInt () {
+  return defineDecorator(META_KEY_PARSE_INT)
+}
+
+/**
+ * A prop that decorated by this decorator will be parsed as float in force.
+ *
+ * @example
+ * @Serializable()
+ * class A {
+ *   @JsonProperty()
+ *   @ParseFloat()
+ *   readonly value: number = 0
+ * }
+ *
+ * const a = deserialize({
+ *   value: '10.24'
+ * }, A)
+ */
+function ParseFloat () {
+  return defineDecorator(META_KEY_PARSE_FLOAT)
+}
+
+/**
  * Check a meta registry has target prop assigned.
  *
  * @param metaKey
@@ -129,5 +167,7 @@ export {
   JsonString,
   DynamicKey,
   Nullable,
+  ParseInt,
+  ParseFloat,
   checkMetaRegistryHasProp
 }
