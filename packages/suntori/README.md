@@ -132,6 +132,8 @@ const json = serialize(doge)  // json should be "equal" to dataSource.
 
 ## More decorators
 
+There are also some additional decorators, providing extra functionalities.
+
 ### @JsonString
 
 ```ts
@@ -221,6 +223,29 @@ const a = deserialize({
 console.log(a.num)           // 0
 console.log(a.numNullable)   // null
 console.log(a.numNullable2)  // 0, only got null if payload were null.
+```
+
+### @ParseInt and @ParseFloat
+
+```ts
+ @Serializable()
+ class A {
+   @JsonProperty()
+   @ParseInt()
+   readonly int: number = 0
+
+   @JsonProperty()
+   @ParseFloat()
+   readonly float: number = 0
+ }
+ 
+ const a = deserialize({
+   int: '10',
+   float: '0.1'
+ }, A)
+
+ console.log(a.int)    // 10
+ console.log(a.float)  // 0.1
 ```
 
 ## License

@@ -1,33 +1,33 @@
 import 'reflect-metadata'
-import { deserialize, DynamicKey, JsonProperty, JsonString, Nullable, Serializable } from '../lib'
+import { deserialize, DynamicKey, JsonProperty, JsonString, Nullable, ParseFloat, ParseInt, Serializable } from '../lib'
 
 describe('Deserialization testing.', () => {
   it('A simple deserialization should work properly.', () => {
     @Serializable()
     class Address {
       @JsonProperty('label')
-      label: string = ''
+        label = ''
 
       @JsonProperty('the_address')
-      address: string = ''
+        address = ''
     }
 
     @Serializable()
     class User {
       @JsonProperty()
-      name: string = ''
+        name = ''
 
       @JsonProperty()
-      age: number = 0
+        age = 0
 
       @JsonProperty()
-      date: Date = new Date()
+        date: Date = new Date()
 
       @JsonProperty('address')
-      address: Address = new Address()
+        address: Address = new Address()
 
       @JsonProperty('authors')
-      authors: string[] = []
+        authors: string[] = []
     }
 
     const instance = deserialize({
@@ -56,13 +56,13 @@ describe('Deserialization testing.', () => {
     @Serializable()
     class User {
       @JsonProperty()
-      name: string = ''
+        name = ''
 
       @JsonProperty('user_age')
-      age: number = 0
+        age = 0
 
       @JsonProperty('user_address')
-      address: string = 'Default address'
+        address = 'Default address'
     }
 
     const instance = deserialize({
@@ -80,13 +80,13 @@ describe('Deserialization testing.', () => {
     @Serializable()
     class User {
       @JsonProperty()
-      name: string = ''
+        name = ''
 
       @JsonProperty('user_age')
-      age: number = 0
+        age = 0
 
       @JsonProperty('user_address')
-      address: string = ''
+        address = ''
     }
 
     @Serializable()
@@ -95,7 +95,7 @@ describe('Deserialization testing.', () => {
         name: 'users',
         type: User
       })
-      users: User[] = []
+        users: User[] = []
     }
 
     const instance = deserialize({
@@ -112,8 +112,8 @@ describe('Deserialization testing.', () => {
 
     expect(instance).toEqual({
       users: [
-        {name: 'LancerComet', age: 100, address: 'The Mars.'},
-        {name: 'John Smith', age: 200, address: 'Heaven.'}
+        { name: 'LancerComet', age: 100, address: 'The Mars.' },
+        { name: 'John Smith', age: 200, address: 'Heaven.' }
       ]
     })
   })
@@ -122,19 +122,19 @@ describe('Deserialization testing.', () => {
     @Serializable()
     class Creature {
       @JsonProperty('user_age')
-      age: number = 0
+        age = 0
     }
 
     @Serializable()
     class Person extends Creature {
       @JsonProperty()
-      name: string = ''
+        name = ''
     }
 
     @Serializable()
     class User extends Person {
       @JsonProperty('user_address')
-      address: string = ''
+        address = ''
     }
 
     const instance = deserialize({
@@ -154,13 +154,13 @@ describe('Deserialization testing.', () => {
     @Serializable()
     class User {
       @JsonProperty()
-      name: string = ''
+        name = ''
 
       @JsonProperty()
-      age: number = 0
+        age = 0
 
       @JsonProperty()
-      date: Date = new Date()
+        date: Date = new Date()
     }
 
     const userInstance = deserialize(null, User)
@@ -172,7 +172,7 @@ describe('Deserialization testing.', () => {
         type: User,
         name: 'user_list'
       })
-      userList: User[] = [userInstance]
+        userList: User[] = [userInstance]
     }
 
     const result = deserialize({
@@ -188,13 +188,13 @@ describe('Deserialization testing.', () => {
     @Serializable()
     class User {
       @JsonProperty()
-      name: string = ''
+        name = ''
 
       @JsonProperty()
-      age: number = 0
+        age = 0
 
       @JsonProperty()
-      date: Date = new Date()
+        date: Date = new Date()
     }
 
     const userInstance = deserialize(undefined, User)
@@ -206,7 +206,7 @@ describe('Deserialization testing.', () => {
         type: User,
         name: 'user_list'
       })
-      userList: User[] = [userInstance]
+        userList: User[] = [userInstance]
     }
 
     const result = deserialize({
@@ -222,7 +222,7 @@ describe('Deserialization testing.', () => {
     @Serializable()
     class Person {
       @JsonProperty()
-      name: string = ''
+        name = ''
 
       constructor (name) {
         this.name = name
@@ -232,7 +232,7 @@ describe('Deserialization testing.', () => {
     @Serializable()
     class Country {
       @JsonProperty('chair_man')
-      chairman: Person = new Person('WINNIE')
+        chairman: Person = new Person('WINNIE')
     }
 
     const correctInstance = deserialize({
@@ -266,57 +266,57 @@ describe('Deserialization testing.', () => {
     @Serializable()
     class Sub {
       @JsonProperty('a_ee')
-      aEe: number = 0
+        aEe = 0
 
       @JsonProperty('b_cii')
-      bCii: number = 0
+        bCii = 0
     }
 
     @Serializable()
     class Params {
       @JsonProperty()
-      c: number = 0
+        c = 0
 
       @JsonProperty()
-      d: number = 0
+        d = 0
     }
 
     @Serializable()
     class A {
       @JsonProperty('sub_data')
-      subData: Sub = new Sub()
+        subData: Sub = new Sub()
 
       @JsonProperty()
       @JsonString()
-      params: Params = new Params()
+        params: Params = new Params()
 
       @JsonProperty()
       @JsonString()
-      paramsB: Params = new Params()
+        paramsB: Params = new Params()
 
       @JsonProperty('params_c')
       @JsonString()
-      paramsC: Params = new Params()
+        paramsC: Params = new Params()
 
       @JsonProperty('params_d')
       @JsonString()
-      paramsD: Params = new Params()
+        paramsD: Params = new Params()
 
       @JsonProperty({
         type: Params,
         name: 'paramsE'
       })
-      paramsE: Params[] = [new Params()]
+        paramsE: Params[] = [new Params()]
 
       @JsonProperty({
         type: Params,
         name: 'paramsF'
       })
       @JsonString()
-      paramsF: Params[] = []
+        paramsF: Params[] = []
 
       @JsonProperty('num')
-      allNum: number = 0
+        allNum = 0
     }
 
     const a = deserialize({
@@ -350,7 +350,7 @@ describe('Deserialization testing.', () => {
     @Serializable()
     class A {
       @JsonProperty()
-      a: string = ''
+        a = ''
     }
 
     @Serializable()
@@ -360,7 +360,7 @@ describe('Deserialization testing.', () => {
         type: A
       })
       @DynamicKey()
-      as: { [key: string]: A } = {}
+        as: { [key: string]: A } = {}
     }
 
     const b = deserialize({
@@ -380,7 +380,7 @@ describe('Deserialization testing.', () => {
     })
   })
 
-  it('@DisallowNull should work properly.', () => {
+  it('@Nullable should work properly.', () => {
     @Serializable()
     class SubA {
       @JsonProperty()
@@ -430,5 +430,26 @@ describe('Deserialization testing.', () => {
       },
       subANullable: null
     })
+  })
+
+  it('@ParseInt and @ParseFloat should work properly.', () => {
+    @Serializable()
+    class Test {
+      @JsonProperty()
+      @ParseInt()
+      readonly int: number = 1
+
+      @JsonProperty()
+      @ParseFloat()
+      readonly float: number = 0.1
+    }
+
+    expect(deserialize({ int: '10', float: '10.12' }, Test)).toEqual({ int: 10, float: 10.12 })
+    expect(deserialize({ int: '-10', float: '-10.12' }, Test)).toEqual({ int: -10, float: -10.12 })
+    expect(deserialize({ int: '20.1', float: '-100' }, Test)).toEqual({ int: 20, float: -100 })
+
+    // Checking fallback.
+    expect(deserialize({ int: 'abc', float: 'def' }, Test)).toEqual({ int: 1, float: 0.1 })
+    expect(deserialize({ int: [], float: () => 100 }, Test)).toEqual({ int: 1, float: 0.1 })
   })
 })
